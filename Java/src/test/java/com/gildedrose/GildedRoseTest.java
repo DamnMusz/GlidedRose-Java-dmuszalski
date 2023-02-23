@@ -1,6 +1,5 @@
 package com.gildedrose;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -42,7 +41,7 @@ class GildedRoseTest {
                 new QualityTestCase("simpleDecrease", new Item("foo", 1, 2), 0,1)
             }),
             Arguments.of((Object) new QualityTestCase[] {
-                new QualityTestCase("expiredDoubleDecrease", new Item("foo", 0, 1), -1,0)
+                new QualityTestCase("expiredDoubleDecrease", new Item("foo", 0, 2), -1,0)
             }),
             Arguments.of((Object) new QualityTestCase[] {
                 new QualityTestCase("neverNegative", new Item("foo", -2, 0), -3,0)
@@ -58,6 +57,10 @@ class GildedRoseTest {
             }),
             Arguments.of((Object) new QualityTestCase[] {
                 new QualityTestCase("sulfurasDontChangeQuality", new Item(GildedRose.SULFURAS, 4, 80), 4,80)
+            }),
+
+            Arguments.of((Object) new QualityTestCase[] {
+                new QualityTestCase("sulfurasDontChangeQuality2", new Item(GildedRose.SULFURAS, -4, 80), -4,80)
             }),
             Arguments.of((Object) new QualityTestCase[] {
                 new QualityTestCase("passesMoreThan10DaysIncrease", new Item(GildedRose.BACKSTAGE_PASS, 12, 1), 11,2)

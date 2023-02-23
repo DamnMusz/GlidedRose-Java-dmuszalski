@@ -6,7 +6,7 @@ class GildedRose {
     static final String AGED_BRIE = "Aged Brie";
     static final String BACKSTAGE_PASS = "Backstage passes to a TAFKAL80ETC concert";
     static final String SULFURAS = "Sulfuras, Hand of Ragnaros";
-    static final String CONJURED = "Conjured";
+    static final String CONJURED = "Conjured Mana Cake";
 
     private Item[] items;
 
@@ -25,35 +25,6 @@ class GildedRose {
         }
     }
 
-    private void updateQuality(Item item) {
-        boolean isExpired = item.sellIn < 0 && !item.name.equals(GildedRose.SULFURAS);
-        boolean reducesQuality = (!item.name.equals(GildedRose.AGED_BRIE) &&
-            !item.name.equals(GildedRose.BACKSTAGE_PASS) &&
-            !item.name.equals(GildedRose.SULFURAS));
-
-        int baseIncrease = 1;
-        int changeRate = 1;
-
-        if (reducesQuality)  {
-            baseIncrease = -1;
-        }
-
-        if (item.name.equals(GildedRose.BACKSTAGE_PASS)) {
-            if(isExpired) {
-                item.quality = 0;
-                changeRate = 0;
-            } else {
-                baseIncrease = calculateBackstagePassIncrease(item.sellIn);
-            }
-        }
-
-        if(isExpired && item.name.equals(GildedRose.AGED_BRIE)) {
-            changeRate = 2;
-        }
-
-        this.applyQualityStep(item, baseIncrease * changeRate);
-    }
-
     private int calculateBackstagePassIncrease(int sellIn) {
         int baseIncrease = 1;
         if (sellIn < 11) {
@@ -63,6 +34,38 @@ class GildedRose {
             baseIncrease++;
         }
         return baseIncrease;
+    }
+
+    private void updateQuality(Item item) {
+        boolean isExpired = item.sellIn < 0 && !item.name.equals(GildedRose.SULFURAS);
+        boolean reducesQuality = (!item.name.equals(GildedRose.AGED_BRIE) &&
+            !item.name.equals(GildedRose.BACKSTAGE_PASS));
+
+        int baseIncrease = item.name.equals(GildedRose.SULFURAS) ? 0 : 1;
+        int changeRate = 1;
+
+        if (reducesQuality)  {
+            baseIncrease *= -1;
+        }
+
+        if (item.name.equals(GildedRose.BACKSTAGE_PASS)) {
+            if(isExpired) {
+                item.quality = 0;
+                baseIncrease = 0;
+            } else {
+                baseIncrease = calculateBackstagePassIncrease(item.sellIn);
+            }
+        }
+
+        if(isExpired) {
+            changeRate *= 2;
+        }
+
+        if(item.name.equals(GildedRose.CONJURED)) {
+            changeRate *= 2;
+        }
+
+        this.applyQualityStep(item, baseIncrease * changeRate);
     }
 
     private void updateSellInDate(Item item) {
