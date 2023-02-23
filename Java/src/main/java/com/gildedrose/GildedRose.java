@@ -26,29 +26,43 @@ class GildedRose {
     }
 
     private void updateQuality(Item item) {
-        boolean isExpired = item.sellIn < 0;
+        boolean isExpired = item.sellIn < 0 && !item.name.equals(GildedRose.SULFURAS);
         boolean reducesQuality = (!item.name.equals(GildedRose.AGED_BRIE) &&
             !item.name.equals(GildedRose.BACKSTAGE_PASS) &&
             !item.name.equals(GildedRose.SULFURAS));
-        int baseModifier = 1;
-        int qualityModifier = 1;
+
+        int baseIncrease = 1;
+        int changeRate = 1;
 
         if (reducesQuality)  {
-            baseModifier = -1;
+            baseIncrease = -1;
         }
-        if (item.name.equals(GildedRose.AGED_BRIE) && isExpired) {
-            qualityModifier = 2;
-        }
-        if (item.name.equals(GildedRose.BACKSTAGE_PASS)) {
-            if (item.sellIn < 11) {
-                baseModifier++;
-            }
 
-            if (item.sellIn < 6) {
-                baseModifier++;
+        if (item.name.equals(GildedRose.BACKSTAGE_PASS)) {
+            if(isExpired) {
+                item.quality = 0;
+                changeRate = 0;
+            } else {
+                baseIncrease = calculateBackstagePassIncrease(item.sellIn);
             }
         }
-        this.applyQualityStep(item, baseModifier * qualityModifier);
+
+        if(isExpired && item.name.equals(GildedRose.AGED_BRIE)) {
+            changeRate = 2;
+        }
+
+        this.applyQualityStep(item, baseIncrease * changeRate);
+    }
+
+    private int calculateBackstagePassIncrease(int sellIn) {
+        int baseIncrease = 1;
+        if (sellIn < 11) {
+            baseIncrease++;
+        }
+        if (sellIn < 6) {
+            baseIncrease++;
+        }
+        return baseIncrease;
     }
 
     private void updateSellInDate(Item item) {
@@ -57,23 +71,10 @@ class GildedRose {
         }
     }
 
-    private void updateExpired(Item item) {
-        if (!item.name.equals(GildedRose.AGED_BRIE)) {
-            if (item.name.equals(GildedRose.BACKSTAGE_PASS)) {
-                item.quality = 0;
-            } else {
-                this.applyQualityStep(item, -1);
-            }
-        }
-    }
-
     public void updateQuality() {
         Arrays.stream(items).forEach(item -> {
             updateSellInDate(item);
             updateQuality(item);
-            if (item.sellIn < 0 && !item.name.equals(GildedRose.SULFURAS)) {
-                updateExpired(item);
-            }
         });
     }
 }
