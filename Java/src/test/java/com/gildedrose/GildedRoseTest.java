@@ -70,6 +70,12 @@ class GildedRoseTest {
             }),
             Arguments.of((Object) new QualityTestCase[] {
                 new QualityTestCase("passesAfterConcert", new Item(GildedRose.BACKSTAGE_PASS, 0, 8), -1,0)
+            }),
+            Arguments.of((Object) new QualityTestCase[] {
+                new QualityTestCase("conjuredDoubleDecrease", new Item(GildedRose.CONJURED, 4, 8), 3,6)
+            }),
+            Arguments.of((Object) new QualityTestCase[] {
+                new QualityTestCase("conjuredExpiredQuadDecrease", new Item(GildedRose.CONJURED, 0, 8), -1,4)
             })
         );
     }
